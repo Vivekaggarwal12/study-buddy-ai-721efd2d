@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { BookOpen, Layers, HelpCircle, Target, StickyNote, Check, Loader2 } from "lucide-react";
+import { BookOpen, Layers, HelpCircle, Target, StickyNote, Check, Loader2, MessageCircle, FileDown } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import ExplanationCard from "@/components/ExplanationCard";
+import EnhancedExplanation from "@/components/EnhancedExplanation";
 import FlashcardsView from "@/components/FlashcardsView";
 import QuizView from "@/components/QuizView";
 import StudyTipsView from "@/components/StudyTipsView";
+import AIChatTutor from "@/components/AIChatTutor";
+import PDFExportButton from "@/components/PDFExportButton";
 
 export interface StudyMaterials {
   explanation: string;
@@ -31,7 +33,6 @@ interface StudyResultsProps {
 function buildAutoNotes(data: StudyMaterials, topic: string) {
   const notes: { topic: string; title: string; content: string }[] = [];
 
-  // 1. Key Concepts note from explanation
   notes.push({
     topic,
     title: "Key Concepts",
@@ -41,7 +42,6 @@ function buildAutoNotes(data: StudyMaterials, topic: string) {
       .join("\n\n"),
   });
 
-  // 2. Quick Definitions from flashcards
   const definitions = data.flashcards
     .map((fc) => `Q: ${fc.question}\nA: ${fc.answer}`)
     .join("\n\n");
@@ -51,7 +51,6 @@ function buildAutoNotes(data: StudyMaterials, topic: string) {
     content: definitions,
   });
 
-  // 3. Study Tips summary
   const tipsContent = data.studyTips
     .map((tip, i) => `${i + 1}. ${tip}`)
     .join("\n");
@@ -141,31 +140,34 @@ const StudyResults = ({ data, topic }: StudyResultsProps) => {
         <p className="text-muted-foreground mb-4">
           for <span className="font-semibold text-primary">{topic}</span>
         </p>
-        <Button
-          onClick={handleAutoSaveNotes}
-          disabled={saving || saved}
-          variant="outline"
-          size="sm"
-          className="gap-1.5"
-        >
-          {saving ? (
-            <>
-              <Loader2 className="h-3.5 w-3.5 animate-spin" /> Saving Notes...
-            </>
-          ) : saved ? (
-            <>
-              <Check className="h-3.5 w-3.5 text-primary" /> Notes Saved
-            </>
-          ) : (
-            <>
-              <StickyNote className="h-3.5 w-3.5" /> Auto-Save as Notes
-            </>
-          )}
-        </Button>
+        <div className="flex items-center justify-center gap-2 flex-wrap">
+          <Button
+            onClick={handleAutoSaveNotes}
+            disabled={saving || saved}
+            variant="outline"
+            size="sm"
+            className="gap-1.5"
+          >
+            {saving ? (
+              <>
+                <Loader2 className="h-3.5 w-3.5 animate-spin" /> Saving Notes...
+              </>
+            ) : saved ? (
+              <>
+                <Check className="h-3.5 w-3.5 text-primary" /> Notes Saved
+              </>
+            ) : (
+              <>
+                <StickyNote className="h-3.5 w-3.5" /> Auto-Save as Notes
+              </>
+            )}
+          </Button>
+          <PDFExportButton data={data} topic={topic} />
+        </div>
       </div>
 
       <Tabs defaultValue="explanation" className="w-full">
-        <TabsList className="w-full grid grid-cols-4 bg-muted/60 rounded-xl p-1 h-auto">
+        <TabsList className="w-full grid grid-cols-5 bg-muted/60 rounded-xl p-1 h-auto">
           <TabsTrigger
             value="explanation"
             className="flex items-center gap-1.5 rounded-lg py-2.5 text-xs sm:text-sm data-[state=active]:bg-card data-[state=active]:shadow-card data-[state=active]:text-primary"
@@ -178,7 +180,7 @@ const StudyResults = ({ data, topic }: StudyResultsProps) => {
             className="flex items-center gap-1.5 rounded-lg py-2.5 text-xs sm:text-sm data-[state=active]:bg-card data-[state=active]:shadow-card data-[state=active]:text-primary"
           >
             <Layers className="h-3.5 w-3.5 hidden sm:block" />
-            Flashcards
+            Cards
           </TabsTrigger>
           <TabsTrigger
             value="quiz"
@@ -186,6 +188,13 @@ const StudyResults = ({ data, topic }: StudyResultsProps) => {
           >
             <HelpCircle className="h-3.5 w-3.5 hidden sm:block" />
             Quiz
+          </TabsTrigger>
+          <TabsTrigger
+            value="tutor"
+            className="flex items-center gap-1.5 rounded-lg py-2.5 text-xs sm:text-sm data-[state=active]:bg-card data-[state=active]:shadow-card data-[state=active]:text-primary"
+          >
+            <MessageCircle className="h-3.5 w-3.5 hidden sm:block" />
+            Tutor
           </TabsTrigger>
           <TabsTrigger
             value="tips"
@@ -198,7 +207,7 @@ const StudyResults = ({ data, topic }: StudyResultsProps) => {
 
         <div className="mt-6">
           <TabsContent value="explanation">
-            <ExplanationCard explanation={data.explanation} />
+            <EnhancedExplanation explanation={data.explanation} topic={topic} />
           </TabsContent>
           <TabsContent value="flashcards">
             <FlashcardsView flashcards={data.flashcards} />
@@ -211,6 +220,9 @@ const StudyResults = ({ data, topic }: StudyResultsProps) => {
             ) : (
               <QuizView questions={quizQuestions} topic={topic} onRequestNewQuestions={handleRequestNewQuiz} />
             )}
+          </TabsContent>
+          <TabsContent value="tutor">
+            <AIChatTutor topic={topic} explanation={data.explanation} />
           </TabsContent>
           <TabsContent value="tips">
             <StudyTipsView tips={data.studyTips} />
