@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Heart, LayoutDashboard, LogOut, CalendarDays, StickyNote } from "lucide-react";
+import { Heart, LayoutDashboard, LogOut, CalendarDays, StickyNote, TrendingUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import HeroInput from "@/components/HeroInput";
 import StudyResults, { StudyMaterials } from "@/components/StudyResults";
+import PomodoroTimer from "@/components/PomodoroTimer";
 import LoadingState from "@/components/LoadingState";
 
 const Index = () => {
@@ -175,27 +176,34 @@ const Index = () => {
             </div>
           )}
           
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-4 gap-2">
             <button
               onClick={() => navigate("/dashboard")}
               className="flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-gradient-to-br from-background to-muted/30 hover:from-muted/50 hover:to-muted/40 border border-border hover:border-primary/30 transition-all group"
             >
               <LayoutDashboard className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
-              <span className="text-sm font-medium">Dashboard</span>
+              <span className="text-xs sm:text-sm font-medium">Dashboard</span>
             </button>
             <button
               onClick={() => navigate("/planner")}
               className="flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-gradient-to-br from-background to-muted/30 hover:from-muted/50 hover:to-muted/40 border border-border hover:border-primary/30 transition-all group"
             >
               <CalendarDays className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
-              <span className="text-sm font-medium">Planner</span>
+              <span className="text-xs sm:text-sm font-medium">Planner</span>
+            </button>
+            <button
+              onClick={() => navigate("/progress")}
+              className="flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-gradient-to-br from-background to-muted/30 hover:from-muted/50 hover:to-muted/40 border border-border hover:border-primary/30 transition-all group"
+            >
+              <TrendingUp className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
+              <span className="text-xs sm:text-sm font-medium">Progress</span>
             </button>
             <button
               onClick={() => navigate("/notes")}
               className="flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-gradient-to-br from-background to-muted/30 hover:from-muted/50 hover:to-muted/40 border border-border hover:border-primary/30 transition-all group"
             >
               <StickyNote className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
-              <span className="text-sm font-medium">Notes</span>
+              <span className="text-xs sm:text-sm font-medium">Notes</span>
             </button>
           </div>
         </div>
@@ -215,6 +223,9 @@ const Index = () => {
           <StudyResults data={studyData} topic={currentTopic} />
         </div>
       )}
+
+      {/* Pomodoro Timer */}
+      <PomodoroTimer />
 
       {/* Footer */}
       <footer className="border-t border-border/50 py-6 mt-auto">
