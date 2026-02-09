@@ -1,9 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, Send, Loader2, Bot, User, Sparkles } from "lucide-react";
+import { MessageCircle, Send, Loader2, Bot, User, Sparkles, Mic, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ReactMarkdown from "react-markdown";
+import useSpeechRecognition from "@/hooks/useSpeechRecognition";
+import useSpeechSynthesis from "@/hooks/useSpeechSynthesis";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import MermaidRenderer from "./MermaidRenderer";
+import ChartRenderer from "./ChartRenderer";
 
 interface Message {
   role: "user" | "assistant";
@@ -24,8 +29,12 @@ const SUGGESTED_QUESTIONS = [
 
 const AIChatTutor = ({ topic, explanation }: AIChatTutorProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [language, setLanguage] = useState<'en' | 'hi'>('en');
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [speakingIndex, setSpeakingIndex] = useState<number | null>(null);
+  const { listening, transcript, error: speechError, start, stop } = useSpeechRecognition({ lang: language === 'hi' ? 'hi-IN' : 'en-US', interimResults: true })
+  const { speaking: isSpeaking, speak, stop: stopSpeaking } = useSpeechSynthesis({ lang: language === 'hi' ? 'hi-IN' : 'en-US', rate: 0.95 })
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -33,8 +42,14 @@ const AIChatTutor = ({ topic, explanation }: AIChatTutorProps) => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  useEffect(() => {
+    if (transcript) setInput(transcript)
+  }, [transcript])
+
   const sendMessage = async (messageText: string) => {
     if (!messageText.trim() || isLoading) return;
+
+    if (listening) stop()
 
     const userMsg: Message = { role: "user", content: messageText.trim() };
     const updatedMessages = [...messages, userMsg];
@@ -56,6 +71,7 @@ const AIChatTutor = ({ topic, explanation }: AIChatTutorProps) => {
           messages: updatedMessages,
           topic,
           context: explanation,
+          language,
         }),
       });
 
@@ -165,6 +181,18 @@ const AIChatTutor = ({ topic, explanation }: AIChatTutorProps) => {
           <p className="text-xs text-muted-foreground">Ask follow-up questions about {topic}</p>
         </div>
       </div>
+      <div className="flex items-center gap-3 mb-4">
+        <div className="text-xs text-muted-foreground">Response language:</div>
+        <Select onValueChange={(v) => setLanguage(v as 'en' | 'hi')} defaultValue={language}>
+          <SelectTrigger className="w-36">
+            <SelectValue placeholder={language === 'en' ? 'English' : 'Hindi'} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="en">English</SelectItem>
+            <SelectItem value="hi">Hindi</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
       <div className="rounded-xl border border-border bg-card shadow-card overflow-hidden">
         {/* Messages area */}
@@ -211,19 +239,57 @@ const AIChatTutor = ({ topic, explanation }: AIChatTutorProps) => {
                     <Bot className="h-3.5 w-3.5 text-primary" />
                   </div>
                 )}
-                <div
-                  className={`max-w-[80%] rounded-xl px-4 py-3 text-sm ${
-                    msg.role === "user"
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted"
-                  }`}
-                >
-                  {msg.role === "assistant" ? (
-                    <div className="prose prose-sm max-w-none text-foreground/85">
-                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                <div className="flex flex-col gap-1">
+                  <div
+                    className={`max-w-[80%] rounded-xl px-4 py-3 text-sm ${
+                      msg.role === "user"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted"
+                    }`}
+                  >
+                    {msg.role === "assistant" ? (
+                      <div className="prose prose-sm max-w-none text-foreground/85">
+                      {/* Detect mermaid code block: ```mermaid\n...``` */}
+                      {(() => {
+                        const mermaidMatch = msg.content.match(/```mermaid\n([\s\S]*?)```/i)
+                        if (mermaidMatch) {
+                          const code = mermaidMatch[1]
+                          return <MermaidRenderer code={code} />
+                        }
+                        const chartMatch = msg.content.match(/```chart-json\n([\s\S]*?)```/i)
+                        if (chartMatch) {
+                          try {
+                            const json = JSON.parse(chartMatch[1])
+                            return <ChartRenderer data={json} />
+                          } catch {
+                            return <pre className="whitespace-pre-wrap">Invalid chart JSON</pre>
+                          }
+                        }
+                        return <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      })()}
                     </div>
                   ) : (
                     <p>{msg.content}</p>
+                  )}
+                  </div>
+                  {msg.role === "assistant" && (
+                    <button
+                      onClick={() => {
+                        if (speakingIndex === i) {
+                          stopSpeaking();
+                          setSpeakingIndex(null);
+                        } else {
+                          setSpeakingIndex(i);
+                          speak(msg.content.replace(/```[^`]*```/g, ''));
+                        }
+                      }}
+                      className="p-1 rounded hover:bg-primary/10 transition-colors w-fit"
+                      aria-label="Speak message"
+                    >
+                      <Volume2 className={`h-3 w-3 ${
+                        speakingIndex === i ? 'text-primary animate-pulse' : 'text-muted-foreground'
+                      }`} />
+                    </button>
                   )}
                 </div>
                 {msg.role === "user" && (
@@ -250,7 +316,7 @@ const AIChatTutor = ({ topic, explanation }: AIChatTutorProps) => {
         </div>
 
         {/* Input */}
-        <form onSubmit={handleSubmit} className="border-t border-border p-3 flex gap-2">
+        <form onSubmit={handleSubmit} className="border-t border-border p-3 flex gap-2 items-center">
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -258,6 +324,15 @@ const AIChatTutor = ({ topic, explanation }: AIChatTutorProps) => {
             disabled={isLoading}
             className="flex-1 text-sm"
           />
+          <Button
+            type="button"
+            size="icon"
+            onClick={() => (listening ? stop() : start())}
+            className={`shrink-0 mr-1 ${listening ? 'bg-red-500/10' : ''}`}
+            aria-label={listening ? 'Stop recording' : 'Start voice input'}
+          >
+            <Mic className="h-4 w-4" />
+          </Button>
           <Button
             type="submit"
             size="icon"

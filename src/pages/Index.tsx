@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Heart, LayoutDashboard, LogOut, CalendarDays, StickyNote, TrendingUp } from "lucide-react";
+import { Heart, LayoutDashboard, LogOut, CalendarDays, StickyNote, TrendingUp, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import HeroInput from "@/components/HeroInput";
@@ -176,7 +176,7 @@ const Index = () => {
             </div>
           )}
           
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
             <button
               onClick={() => navigate("/dashboard")}
               className="flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-gradient-to-br from-background to-muted/30 hover:from-muted/50 hover:to-muted/40 border border-border hover:border-primary/30 transition-all group"
@@ -204,6 +204,13 @@ const Index = () => {
             >
               <StickyNote className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
               <span className="text-xs sm:text-sm font-medium">Notes</span>
+            </button>
+            <button
+              onClick={() => navigate("/echo-assistant")}
+              className="flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-gradient-to-br from-purple-500/10 to-blue-500/10 hover:from-purple-500/20 hover:to-blue-500/20 border border-purple-500/30 hover:border-purple-500/60 transition-all group shadow-lg hover:shadow-purple-500/20"
+            >
+              <Sparkles className="h-4 w-4 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform" />
+              <span className="text-xs sm:text-sm font-medium bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-400 dark:to-blue-400 bg-clip-text text-transparent">Echo AI</span>
             </button>
           </div>
         </div>

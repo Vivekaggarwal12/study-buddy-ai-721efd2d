@@ -10,6 +10,8 @@ import Dashboard from "./pages/Dashboard";
 import StudyPlanner from "./pages/StudyPlanner";
 import TopicNotes from "./pages/TopicNotes";
 import Progress from "./pages/Progress";
+import Assistant from "./pages/Assistant";
+import EchoAssistant from "./pages/EchoAssistant";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +40,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/assistant" element={<ProtectedRoute><Assistant /></ProtectedRoute>} />
+            <Route path="/echo-assistant" element={<ProtectedRoute><EchoAssistant /></ProtectedRoute>} />
             <Route path="/planner" element={<ProtectedRoute><StudyPlanner /></ProtectedRoute>} />
             <Route path="/notes" element={<ProtectedRoute><TopicNotes /></ProtectedRoute>} />
             <Route path="/progress" element={<ProtectedRoute><Progress /></ProtectedRoute>} />

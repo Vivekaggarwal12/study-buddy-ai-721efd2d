@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lightbulb, ChevronRight, ChevronDown, CheckCircle2, BookOpen, Youtube } from "lucide-react";
+import { Lightbulb, ChevronRight, ChevronDown, CheckCircle2, BookOpen, Youtube, Volume2, Pause, Play } from "lucide-react";
+import useSpeechSynthesis from "@/hooks/useSpeechSynthesis";
 import ReactMarkdown from "react-markdown";
+import MermaidRenderer from "./MermaidRenderer";
+import ChartRenderer from "./ChartRenderer";
 
 interface EnhancedExplanationProps {
   explanation: string;
@@ -12,6 +15,7 @@ const EnhancedExplanation = ({ explanation, topic }: EnhancedExplanationProps) =
   const paragraphs = explanation.split(/\n\n+/).filter((p) => p.trim());
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const [expandedStep, setExpandedStep] = useState<number | null>(0);
+  const { speaking, paused, speak, pause, resume, stop } = useSpeechSynthesis({ lang: 'en-US', rate: 0.95 });
 
   const toggleStep = (index: number) => {
     setExpandedStep(expandedStep === index ? null : index);
@@ -110,6 +114,21 @@ const EnhancedExplanation = ({ explanation, topic }: EnhancedExplanationProps) =
                   Step {i + 1}: {paragraph.slice(0, 60).trim()}
                   {paragraph.length > 60 ? "..." : ""}
                 </span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (speaking) stop();
+                    else speak(paragraph);
+                  }}
+                  className="p-1 rounded hover:bg-primary/10 transition-colors mr-2"
+                  aria-label={speaking ? 'Stop speaking' : 'Speak step'}
+                >
+                  {speaking ? (
+                    <Volume2 className="h-4 w-4 text-primary animate-pulse" />
+                  ) : (
+                    <Volume2 className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </button>
                 {isExpanded ? (
                   <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
                 ) : (
@@ -128,7 +147,23 @@ const EnhancedExplanation = ({ explanation, topic }: EnhancedExplanationProps) =
                   >
                     <div className="px-4 pb-4 pl-14">
                       <div className="prose prose-sm max-w-none text-foreground/85 leading-relaxed">
-                        <ReactMarkdown>{paragraph}</ReactMarkdown>
+                        {(() => {
+                          const mermaidMatch = paragraph.match(/```mermaid\n([\s\S]*?)```/i)
+                          if (mermaidMatch) {
+                            const code = mermaidMatch[1]
+                            return <MermaidRenderer code={code} />
+                          }
+                          const chartMatch = paragraph.match(/```chart-json\n([\s\S]*?)```/i)
+                          if (chartMatch) {
+                            try {
+                              const json = JSON.parse(chartMatch[1])
+                              return <ChartRenderer data={json} />
+                            } catch {
+                              return <pre className="whitespace-pre-wrap">Invalid chart JSON</pre>
+                            }
+                          }
+                          return <ReactMarkdown>{paragraph}</ReactMarkdown>
+                        })()}
                       </div>
                     </div>
                   </motion.div>

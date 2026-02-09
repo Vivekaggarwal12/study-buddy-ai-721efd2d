@@ -1,12 +1,25 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { Lightbulb } from "lucide-react";
+import { Lightbulb, Volume2 } from "lucide-react";
+import MermaidRenderer from "./MermaidRenderer";
+import ChartRenderer from "./ChartRenderer";
+import useSpeechSynthesis from "@/hooks/useSpeechSynthesis";
 
 interface ExplanationCardProps {
   explanation: string;
 }
 
 const ExplanationCard = ({ explanation }: ExplanationCardProps) => {
+  const { speaking: isSpeaking, speak, stop } = useSpeechSynthesis({ lang: 'en-US', rate: 0.95 });
+
+  const handleSpeak = () => {
+    if (isSpeaking) {
+      stop();
+    } else {
+      speak(explanation.replace(/```[^`]*```/g, ''));
+    }
+  };
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -19,9 +32,32 @@ const ExplanationCard = ({ explanation }: ExplanationCardProps) => {
           <Lightbulb className="h-5 w-5 text-primary" />
         </div>
         <h3 className="text-xl font-display font-semibold text-foreground">Simple Explanation</h3>
+        <button
+          onClick={handleSpeak}
+          className="ml-auto p-2 rounded-lg hover:bg-primary/10 transition-colors"
+          aria-label={isSpeaking ? 'Stop speaking' : 'Speak explanation'}
+        >
+          <Volume2 className={`h-5 w-5 ${isSpeaking ? 'text-primary animate-pulse' : 'text-muted-foreground'}`} />
+        </button>
       </div>
       <div className="prose prose-sm max-w-none text-foreground/85 leading-relaxed">
-        <ReactMarkdown>{explanation}</ReactMarkdown>
+        {(() => {
+          const mermaidMatch = explanation.match(/```mermaid\n([\s\S]*?)```/i)
+          if (mermaidMatch) {
+            const code = mermaidMatch[1]
+            return <MermaidRenderer code={code} />
+          }
+          const chartMatch = explanation.match(/```chart-json\n([\s\S]*?)```/i)
+          if (chartMatch) {
+            try {
+              const json = JSON.parse(chartMatch[1])
+              return <ChartRenderer data={json} />
+            } catch {
+              return <pre className="whitespace-pre-wrap">Invalid chart JSON</pre>
+            }
+          }
+          return <ReactMarkdown>{explanation}</ReactMarkdown>
+        })()}
       </div>
     </motion.div>
   );

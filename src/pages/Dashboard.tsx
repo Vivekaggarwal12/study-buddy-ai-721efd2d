@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, Trophy, Heart, Clock, ArrowRight, Trash2, CalendarDays, StickyNote } from "lucide-react";
+import { BookOpen, Trophy, Heart, Clock, ArrowRight, Trash2, CalendarDays, StickyNote, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -101,7 +101,7 @@ const Dashboard = () => {
             Welcome back, {displayName}!
           </h1>
           <p className="text-muted-foreground">Here's your study progress overview.</p>
-          <div className="flex gap-2 mt-3">
+          <div className="flex flex-wrap gap-2 mt-3">
             <Button
               variant="outline"
               size="sm"
@@ -117,6 +117,14 @@ const Dashboard = () => {
               className="gap-1.5"
             >
               <StickyNote className="h-3.5 w-3.5" /> Study Notes
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => navigate("/echo-assistant")}
+              className="gap-1.5 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+            >
+              <Sparkles className="h-3.5 w-3.5" /> Echo AI
             </Button>
           </div>
         </motion.div>
