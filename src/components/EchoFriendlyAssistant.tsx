@@ -145,7 +145,7 @@ const EchoFriendlyAssistant = ({ topic = "General Studies", context = "" }: Echo
         if (resp.status === 404) {
           errorMsg = "The Echo Assistant backend function has not been deployed yet. Please deploy it using: supabase functions deploy echo-assistant";
         } else if (resp.status === 401 || resp.status === 403) {
-          errorMsg = "Authentication failed. Please check your Supabase configuration and ensure LOVABLE_API_KEY is set in Supabase secrets.";
+          errorMsg = "Authentication failed. Please check your Supabase configuration and ensure GEMINI_API_KEY is set in Supabase secrets.";
         } else if (resp.status === 429) {
           errorMsg = "Too many requests. Please wait a moment and try again.";
         }
@@ -215,9 +215,9 @@ const EchoFriendlyAssistant = ({ topic = "General Studies", context = "" }: Echo
       
       setMessages((prev) => [
         ...prev,
-        { 
-          role: "assistant", 
-          content: `⚠️ **Connection Error**\n\n${errorMsg}\n\n**How to fix this:**\n\n1. Make sure the backend function is deployed:\n   \`supabase functions deploy echo-assistant\`\n\n2. Set the LOVABLE_API_KEY in Supabase:\n   \`supabase secrets set LOVABLE_API_KEY='your-key'\`\n\n3. Check your .env file has all required variables:\n   - VITE_SUPABASE_URL\n   - VITE_SUPABASE_PUBLISHABLE_KEY\n   - VITE_SUPABASE_PROJECT_ID\n\n4. Restart the dev server:\n   \`npm run dev\`` 
+        {
+          role: "assistant",
+          content: `⚠️ **Connection Error**\n\n${errorMsg}\n\n**How to fix this:**\n\n1. Make sure the backend function is deployed:\n   \`supabase functions deploy echo-assistant\`\n\n2. Set the GEMINI_API_KEY in Supabase:\n   \`supabase secrets set GEMINI_API_KEY='your-key'\`\n\n3. Check your .env file has all required variables:\n   - VITE_SUPABASE_URL\n   - VITE_SUPABASE_PUBLISHABLE_KEY\n   - VITE_SUPABASE_PROJECT_ID\n\n4. Restart the dev server:\n   \`npm run dev\`` 
         },
       ]);
     } finally {
@@ -311,7 +311,7 @@ const EchoFriendlyAssistant = ({ topic = "General Studies", context = "" }: Echo
                 </p>
                 <ol className="list-decimal list-inside space-y-1 ml-2">
                   <li>Deploy the function: <code className="bg-black/20 px-2 py-1 rounded">supabase functions deploy echo-assistant</code></li>
-                  <li>Set API key: <code className="bg-black/20 px-2 py-1 rounded">supabase secrets set LOVABLE_API_KEY="your-key"</code></li>
+                  <li>Set API key: <code className="bg-black/20 px-2 py-1 rounded">supabase secrets set GEMINI_API_KEY="your-key"</code></li>
                   <li>Restart: <code className="bg-black/20 px-2 py-1 rounded">npm run dev</code></li>
                 </ol>
                 <button

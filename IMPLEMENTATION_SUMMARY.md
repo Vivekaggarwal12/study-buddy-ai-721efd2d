@@ -256,7 +256,7 @@ VITE_GEMINI_API_KEY         # Fallback (optional)
 
 ### 5. **Supabase Secrets Required**
 ```
-LOVABLE_API_KEY  # AI gateway API key
+GEMINI_API_KEY  # AI gateway API key
 ```
 
 ---
@@ -325,7 +325,7 @@ data: {"choices":[{"delta":{"content":" फोटो"}}]}
 - [x] Code examples provided
 - [x] README updated
 - [ ] Deploy function to Supabase (run: `supabase functions deploy echo-assistant`)
-- [ ] Set LOVABLE_API_KEY in Supabase secrets
+ - [ ] Set GEMINI_API_KEY in Supabase secrets
 - [ ] Test in production
 
 **To Deploy:**
@@ -334,7 +334,7 @@ data: {"choices":[{"delta":{"content":" फोटो"}}]}
 supabase functions deploy echo-assistant
 
 # 2. Set the API key
-supabase secrets set LOVABLE_API_KEY="your-key"
+supabase secrets set GEMINI_API_KEY="your-key"
 
 # 3. Build and deploy the app
 npm run build

@@ -32,7 +32,7 @@ Created `src/lib/echoDebugger.ts` with:
 | Frontend | ✅ Complete | Error handling + setup banners added |
 | Navigation | ✅ Complete | Echo AI button visible on home & dashboard |
 | Backend Function | ⏳ Needs Deployment | Run: `supabase functions deploy echo-assistant` |
-| API Key | ⏳ Needs Configuration | Run: `supabase secrets set LOVABLE_API_KEY="key"` |
+| API Key | ⏳ Needs Configuration | Run: `supabase secrets set GEMINI_API_KEY="key"` |
 | Error Messages | ✅ Complete | Show exact fix steps & next actions |
 | Diagnostics | ✅ Complete | Browser console tools ready |
 
@@ -57,7 +57,7 @@ supabase functions deploy echo-assistant
 
 ### Step 3: Set API Key (1 minute)
 ```bash
-supabase secrets set LOVABLE_API_KEY="your-key-here"
+supabase secrets set GEMINI_API_KEY="your-key-here"
 # Wait 30 seconds for propagation
 ```
 

@@ -59,7 +59,7 @@ VITE_SUPABASE_URL="https://your-project.supabase.co"
         if (res.status === 404) {
           console.error("❌ Function not deployed. Run: supabase functions deploy echo-assistant");
         } else if (res.status === 401 || res.status === 403) {
-          console.error("❌ Authentication failed. Check LOVABLE_API_KEY in Supabase secrets.");
+          console.error("❌ Authentication failed. Check GEMINI_API_KEY in Supabase secrets.");
         }
       })
       .catch(err => {
@@ -76,7 +76,7 @@ VITE_SUPABASE_URL="https://your-project.supabase.co"
    supabase functions deploy echo-assistant
 
 3. 🔐 Set Supabase secret:
-   supabase secrets set LOVABLE_API_KEY='your-api-key'
+  supabase secrets set GEMINI_API_KEY='your-api-key'
 
 4. 🔄 Restart dev server:
    npm run dev
@@ -104,7 +104,7 @@ export function debugEchoAssistantError(error: Error) {
   if (error.message.includes("Failed to connect")) {
     console.log("🔧 Try:");
     console.log("   1. Run: supabase functions deploy echo-assistant");
-    console.log("   2. Run: supabase secrets set LOVABLE_API_KEY='your-key'");
+    console.log("   2. Run: supabase secrets set GEMINI_API_KEY='your-key'");
     console.log("   3. Restart: npm run dev");
   }
 

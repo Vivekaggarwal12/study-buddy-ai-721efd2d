@@ -122,7 +122,7 @@ supabase functions deploy echo-assistant
 
 Set the required environment variable in Supabase:
 ```bash
-supabase secrets set LOVABLE_API_KEY="your-api-key"
+supabase secrets set GEMINI_API_KEY="your-api-key"
 ```
 
 See [ECHO_ASSISTANT_SETUP.md](./ECHO_ASSISTANT_SETUP.md) for detailed instructions.

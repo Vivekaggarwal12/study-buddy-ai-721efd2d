@@ -23,7 +23,7 @@ serve(async (req) => {
 
     console.log("Received prompt:", prompt);
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
     
     // Fallback: Generate schedule locally if API key is missing or AI fails
     const generateFallbackSchedule = (userPrompt: string) => {
@@ -97,7 +97,7 @@ serve(async (req) => {
       return { schedule };
     };
     
-    if (!LOVABLE_API_KEY) {
+    if (!GEMINI_API_KEY) {
       console.log("No API key, using fallback schedule generation");
       const fallbackSchedule = generateFallbackSchedule(prompt);
       return new Response(JSON.stringify(fallbackSchedule), {
@@ -132,7 +132,7 @@ Rules:
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          Authorization: `Bearer ${GEMINI_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({

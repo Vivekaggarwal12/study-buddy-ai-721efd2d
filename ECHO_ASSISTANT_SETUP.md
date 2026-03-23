@@ -35,18 +35,18 @@ deno run --allow-all supabase/functions/echo-assistant/index.ts
 
 ### 2. **Environment Variables for Function**
 
-The function requires `LOVABLE_API_KEY` in Supabase secrets:
+The function requires `GEMINI_API_KEY` in Supabase secrets:
 
 ```bash
 # Go to Supabase Dashboard:
 # 1. Settings > Edge Functions > Environment Variables
-# 2. Add: LOVABLE_API_KEY = "your-api-key"
+# 2. Add: GEMINI_API_KEY = "your-api-key"
 ```
 
 Or set via CLI:
 
 ```bash
-supabase secrets set LOVABLE_API_KEY="your-api-key"
+supabase secrets set GEMINI_API_KEY="your-api-key"
 ```
 
 ### 3. **Verify Deployment**
@@ -146,12 +146,12 @@ supabase functions list
 # Should show: echo-assistant
 ```
 
-### Issue: LOVABLE_API_KEY Not Set
+### Issue: GEMINI_API_KEY Not Set
 
 **Solution:**
 ```bash
 # Set the secret
-supabase secrets set LOVABLE_API_KEY="your-key"
+supabase secrets set GEMINI_API_KEY="your-key"
 
 # Verify it's set (shows masked for security)
 supabase secrets list
@@ -360,7 +360,7 @@ if (result.confidence < MIN_CONFIDENCE) {
 ## Deployment Checklist
 
 - [ ] `.env` file configured with all keys
-- [ ] `LOVABLE_API_KEY` set in Supabase secrets
+- [ ] `GEMINI_API_KEY` set in Supabase secrets
 - [ ] `echo-assistant` function deployed
 - [ ] Function endpoint responds with 200
 - [ ] Language detection working correctly

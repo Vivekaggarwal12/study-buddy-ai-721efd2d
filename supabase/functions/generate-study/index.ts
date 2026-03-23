@@ -23,9 +23,9 @@ serve(async (req) => {
 
     const sanitizedTopic = topic.trim().slice(0, 200);
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+    if (!GEMINI_API_KEY) {
+      throw new Error("GEMINI_API_KEY is not configured");
     }
 
     const systemPrompt = `You are an expert educational tutor who creates comprehensive study materials. Given a topic, you MUST return a valid JSON object with exactly this structure (no markdown, no code fences, just pure JSON):
@@ -65,7 +65,7 @@ Rules:
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          Authorization: `Bearer ${GEMINI_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({

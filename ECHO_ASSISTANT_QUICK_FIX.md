@@ -44,7 +44,7 @@ supabase functions deploy echo-assistant
 The backend needs an API key. Run:
 
 ```bash
-supabase secrets set LOVABLE_API_KEY="your-api-key-here"
+supabase secrets set GEMINI_API_KEY="your-api-key-here"
 ```
 
 **Where to get the API key:**
@@ -113,7 +113,7 @@ curl -X POST \
 supabase secrets list
 ```
 
-Should show: `LOVABLE_API_KEY` (masked in output)
+Should show: `GEMINI_API_KEY` (masked in output)
 
 ---
 
@@ -141,10 +141,10 @@ Function not deployed. Run: supabase functions deploy echo-assistant
 
 ### If you see 401/403 error:
 ```
-Authentication failed. Check LOVABLE_API_KEY
+Authentication failed. Check GEMINI_API_KEY
 ```
 **Fix:** 
-1. Run: `supabase secrets set LOVABLE_API_KEY="your-key"`
+1. Run: `supabase secrets set GEMINI_API_KEY="your-key"`
 2. Wait 30 seconds for secrets to propagate
 3. Refresh browser
 
@@ -166,7 +166,7 @@ Authentication failed. Check LOVABLE_API_KEY
 
 - [ ] `.env` file has all 4 variables
 - [ ] Ran: `supabase functions deploy echo-assistant`
-- [ ] Ran: `supabase secrets set LOVABLE_API_KEY="key"`
+- [ ] Ran: `supabase secrets set GEMINI_API_KEY="key"`
 - [ ] `supabase functions list` shows `echo-assistant`
 - [ ] Dev server restarted: `npm run dev`
 - [ ] Browser refreshed

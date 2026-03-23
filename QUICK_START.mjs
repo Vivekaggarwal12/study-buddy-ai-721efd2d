@@ -67,7 +67,7 @@ function deployFunction() {
 function setSecrets() {
   console.log("🔐 Setting Supabase secrets...\n");
   console.log("Replace 'YOUR-API-KEY' with your actual API key:\n");
-  console.log("  supabase secrets set LOVABLE_API_KEY='YOUR-API-KEY'\n");
+  console.log("  supabase secrets set GEMINI_API_KEY='YOUR-API-KEY'\n");
   console.log("Verify secrets are set:");
   console.log("  supabase secrets list\n");
 }
@@ -138,8 +138,8 @@ function troubleshoot() {
   console.log("❌ Function not found (404)");
   console.log("   → Run: supabase functions deploy echo-assistant\n");
 
-  console.log("❌ LOVABLE_API_KEY not set");
-  console.log("   → Run: supabase secrets set LOVABLE_API_KEY='YOUR-KEY'\n");
+  console.log("❌ GEMINI_API_KEY not set");
+  console.log("   → Run: supabase secrets set GEMINI_API_KEY='YOUR-KEY'\n");
 
   console.log("❌ Language not detected");
   console.log("   → Check browser console for detection confidence\n");
@@ -247,7 +247,7 @@ export default quickStart;
 
 DEPLOYMENT:
   supabase functions deploy echo-assistant
-  supabase secrets set LOVABLE_API_KEY='your-key'
+  supabase secrets set GEMINI_API_KEY='your-key'
 
 DEVELOPMENT:
   npm run dev           # Start dev server

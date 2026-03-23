@@ -69,7 +69,7 @@ Run:
 supabase secrets list
 ```
 
-You should see `LOVABLE_API_KEY` in the list.
+You should see `GEMINI_API_KEY` in the list.
 
 **If NOT set:**
 
@@ -80,7 +80,7 @@ First, get your API key from:
 
 Then run:
 ```bash
-supabase secrets set LOVABLE_API_KEY="your-key-here"
+supabase secrets set GEMINI_API_KEY="your-key-here"
 ```
 
 **Wait:** 30 seconds for secrets to propagate
@@ -152,11 +152,11 @@ Fix:
 Fix: supabase functions deploy echo-assistant
 ```
 
-### Error: "Authentication failed - LOVABLE_API_KEY not set"
+### Error: "Authentication failed - GEMINI_API_KEY not set"
 ```
 Fix:
 1. Get your API key
-2. Run: supabase secrets set LOVABLE_API_KEY="key"
+2. Run: supabase secrets set GEMINI_API_KEY="key"
 3. Wait 30 seconds
 4. Refresh browser
 ```
@@ -208,7 +208,7 @@ supabase functions logs echo-assistant --tail
 
 This shows real-time logs. Look for:
 - `ERROR: Cannot find...` → Function issue
-- `Missing LOVABLE_API_KEY` → Secret not set
+- `Missing GEMINI_API_KEY` → Secret not set
 - `CORS error` → Temporary, usually resolves
 
 ### Test Endpoint Directly
